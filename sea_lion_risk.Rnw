@@ -1,0 +1,111 @@
+\documentclass{article}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{amsmath}
+\usepackage{times}
+
+\textwidth=6.2in
+\textheight=8.5in
+%\parskip=.3cm
+\oddsidemargin=.1in
+\evensidemargin=.1in
+\headheight=-.3in
+
+
+%------------------------------------------------------------
+% newcommand
+%------------------------------------------------------------
+\newcommand{\scscst}{\scriptscriptstyle}
+\newcommand{\scst}{\scriptstyle}
+\newcommand{\Robject}[1]{{\texttt{#1}}}
+\newcommand{\Rfunction}[1]{{\texttt{#1}}}
+\newcommand{\Rclass}[1]{\textit{#1}}
+\newcommand{\Rpackage}[1]{\textit{#1}}
+\newcommand{\Rexpression}[1]{\texttt{#1}}
+\newcommand{\Rmethod}[1]{{\texttt{#1}}}
+\newcommand{\Rfunarg}[1]{{\texttt{#1}}}
+
+\begin{document}
+\SweaveOpts{concordance=TRUE}
+
+%------------------------------------------------------------
+\title{Ivermectin trial}
+%------------------------------------------------------------
+\author{David Hayman}
+%\date{}
+
+\SweaveOpts{highlight=TRUE, tidy=TRUE, keep.space=TRUE, keep.blank.space=FALSE, keep.comment=TRUE}
+\SweaveOpts{prefix.string=Fig}
+
+
+\maketitle
+%\tableofcontents
+
+
+%-------------------------------------------
+\section{The sex and ivermectin effect}
+%--------------------------------------------
+
+This uses your data from the slides and the number dead and the numbers of treatments and controls. First we look at the sex effect:
+
+<<test1,keep.source = FALSE>>=
+sex<-matrix(c(32,43),ncol=2)
+chisq.test(sex)
+@
+
+There seems to be no sex effect - i.e. sex is not a risk factor given these sample sizes, despite the difference in mortality. But you also need to use your denomiator data, i.e. how many in your study were male vs female.
+
+Next we look at the ivermection effect:
+
+<<test2,keep.source = FALSE>>=
+ivermectin<-matrix(c(21,142,41,137),ncol=2)
+chisq.test(ivermectin)
+rownames(ivermectin)<-c('died','survive')
+colnames(ivermectin)<-c('ivermectin','control')
+@
+
+\begin{figure}
+<<test3, fig=TRUE,float=FALSE>>=
+barplot(ivermectin,legend=T,beside=T,main='Ivermectin control',
+         args.legend = list(x = "topright", bty = "n", inset=c(0.3, 0.1)))
+@
+\caption{Cohort study data}
+\label{fig:p}
+\end{figure}
+
+We can estimate the relative risk etc by using the 2 * 2 table, e.g.:
+
+<<test4,keep.source = FALSE>>=
+rel.risk <- (ivermectin[1,1]/sum(ivermectin[1,]))/(ivermectin[2,1]/sum(ivermectin[2,]))
+abs.risk.reduction <- (ivermectin[1,1]/sum(ivermectin[,1]))/(ivermectin[1,2]/sum(ivermectin[,2]))
+abs.risk.reduction
+@
+
+But we can by-pass that by using a Massey R package - it'll give you Confidence intervals too. Just note that in the next section of code I had to transpose the data matrix so that the 'exposed +' becomes the ivermectin treatment and the 'exposed -' the control, and the 'outcome +' the death and the 'outcome -' the survival. You may find a more intuitive way you want those to be.
+
+<<test5,keep.source = FALSE>>=
+library(epiR)
+epi.2by2(t(ivermectin))
+@
+
+There is a clear, significant protective effect in ivermectin treatment in this study for the pups. The results are discussed below. 
+
+But there is an interesting finding in the prospective cohort study: i.e. that more (9) controls died than ivermectin treatments (3). This is a subset of the main treatment trial study.
+
+<<test2,keep.source = FALSE>>=
+c_ivermectin<-matrix(c(3,19,9,19),ncol=2)
+chisq.test(c_ivermectin)
+rownames(c_ivermectin)<-c('died','survive')
+colnames(c_ivermectin)<-c('ivermectin','control')
+epi.2by2(t(c_ivermectin))
+@
+
+The trend is the same, in that the ivermectin increases survival, but it gives you a sense of the sample size issues you may face with this study, because as you can see teh results are not 'significant' (e.g. odds ratios include 1 and attributable risks 0)
+
+%-------------------------------------------
+\section{Key findings and interpretation}
+%--------------------------------------------
+
+This suggests that the difference that ivermectin made between the two groups was 10\% (95\% confidence intervals are 2-18\%, i.e. the 'Attrib risk' row). And at the population level ivermectin will reduce the mortality by 5\% (3-12\%) (the 'Attrib risk in population (\%)'). Note that this only counts for the duration of the study and is based on a number of assumptions. However, given the confidence intervals, this suggests that ivermectin treatment could save 1 in 8 to 1 in 39 pups with a best estimate of 1 in 21 pups. Again, this is only relevant for the duration of the study and we do not know if this will extrapolate beyond the first months of life. That will become apparent when these become breeding adults and return to the island, I presume.
+
+\end{document}
