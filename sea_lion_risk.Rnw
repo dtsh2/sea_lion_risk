@@ -53,9 +53,9 @@ sex<-matrix(c(32,43),ncol=2)
 chisq.test(sex)
 @
 
-There seems to be no sex effect - i.e. sex is not a risk factor given these sample sizes, despite the difference in mortality. But you also need to use your denomiator data, i.e. how many in your study were male vs female.
+There seems to be no sex effect - i.e. sex is not a risk factor given these sample sizes, despite the difference in mortality. But you also need to use your denominator data, i.e. how many in your study were male vs female.
 
-Next we look at the ivermection effect:
+Next we look at the ivermectin effect:
 
 <<test2,keep.source = FALSE>>=
 ivermectin<-matrix(c(21,142,41,137),ncol=2)
