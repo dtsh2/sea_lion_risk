@@ -49,11 +49,15 @@
 This uses your data from the slides and the number dead and the numbers of treatments and controls. First we look at the sex effect:
 
 <<test1,keep.source = FALSE>>=
-sex<-matrix(c(32,43),ncol=2)
+sex<-matrix(c(32,148,43,119),ncol=2)
+colnames(sex)<-c('male','female')
+rownames(sex)<-c('died','survive')
+print(sex)
 chisq.test(sex)
+chisq.test(sex,simulate.p.value = T, B = 10000)
 @
 
-There seems to be no sex effect - i.e. sex is not a risk factor given these sample sizes, despite the difference in mortality. But you also need to use your denominator data, i.e. how many in your study were male vs female.
+There seems to be no sex effect - i.e. sex is not a risk factor given these sample sizes, despite the difference in mortality and inclusion of the denominator data, i.e. how many in your study were male vs female.
 
 Next we look at the ivermectin effect:
 

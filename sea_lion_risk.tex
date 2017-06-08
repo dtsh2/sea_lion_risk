@@ -51,18 +51,38 @@ This uses your data from the slides and the number dead and the numbers of treat
 
 \begin{Schunk}
 \begin{Sinput}
-> sex <- matrix(c(32, 43), ncol = 2)
+> sex <- matrix(c(32, 148, 43, 119), ncol = 2)
+> colnames(sex) <- c("male", "female")
+> rownames(sex) <- c("died", "survive")
+> print(sex)
+\end{Sinput}
+\begin{Soutput}
+        male female
+died      32     43
+survive  148    119
+\end{Soutput}
+\begin{Sinput}
 > chisq.test(sex)
 \end{Sinput}
 \begin{Soutput}
-	Chi-squared test for given probabilities
+	Pearson's Chi-squared test with Yates' continuity correction
 
 data:  sex
-X-squared = 1.6133, df = 1, p-value = 0.204
+X-squared = 3.3315, df = 1, p-value = 0.06796
+\end{Soutput}
+\begin{Sinput}
+> chisq.test(sex, simulate.p.value = T, B = 10000)
+\end{Sinput}
+\begin{Soutput}
+	Pearson's Chi-squared test with simulated p-value (based on 10000
+	replicates)
+
+data:  sex
+X-squared = 3.8264, df = NA, p-value = 0.06689
 \end{Soutput}
 \end{Schunk}
 
-There seems to be no sex effect - i.e. sex is not a risk factor given these sample sizes, despite the difference in mortality. But you also need to use your denominator data, i.e. how many in your study were male vs female.
+There seems to be no sex effect - i.e. sex is not a risk factor given these sample sizes, despite the difference in mortality and inclusion of the denominator data, i.e. how many in your study were male vs female.
 
 Next we look at the ivermectin effect:
 
